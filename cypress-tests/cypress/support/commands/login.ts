@@ -1,19 +1,18 @@
 const renkuLogin = (credentials: { username: string; password: string }[]) => {
-  cy.wrap(credentials, { log: false }).each((credential: {password: string, username: string}) => {
-    cy.get("#username").type(credential.username);
-    cy.get("#password").type(credential.password, { log: false });
-    cy.get("#kc-login").click().should("not.exist");
-  })
+  cy.wrap(credentials, { log: false }).each(
+    (credential: { password: string; username: string }) => {
+      cy.get("#username").type(credential.username);
+      cy.get("#password").type(credential.password, { log: false });
+      cy.get("#kc-login").click();
+    }
+  );
   cy.url().then((url) => {
     const parsedUrl = new URL(url);
     if (
       parsedUrl.pathname.includes("gitlab") ||
       parsedUrl.host.includes("gitlab")
     ) {
-      cy.get(".doorkeeper-authorize >>>> .btn-danger")
-        .should("be.visible")
-        .should("be.enabled")
-        .click();
+      cy.contains("button", "Authorize").should("be.visible").click();
     }
   });
 };
@@ -24,7 +23,7 @@ const register = (
   firstName?: string,
   lastName?: string
 ) => {
-  cy.visit("/login");
+  cy.visit("/api/auth/login");
 
   // ? wait to be assess whether tokens were refreshed automatically or we really need to register
   cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
@@ -96,7 +95,7 @@ function registerAndVerify(props: RegisterAndVerifyProps) {
     expect(["/", ""]).to.include(loc.pathname);
     expect(loc.search).to.eq("");
     expect(loc.hostname).to.eq(baseURL.hostname);
-  })
+  });
   cy.get("header").should("be.visible");
   cy.get("footer").should("be.visible");
   // If we send a request to the user endpoint on Gitlab too quickly after we log in then
@@ -140,13 +139,7 @@ function robustLogin(props?: RobustLoginProps) {
   );
 }
 
-function logout() {
-  cy.get("#profile-dropdown").should("be.visible").click();
-  cy.get("#logout-link").should("be.visible").click();
-}
-
 export default function registerLoginCommands() {
-  Cypress.Commands.add("logout", logout);
   Cypress.Commands.add("renkuLogin", renkuLogin);
   Cypress.Commands.add("register", register);
   Cypress.Commands.add("registerAndVerify", registerAndVerify);
@@ -157,7 +150,6 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      logout();
       renkuLogin(credentials: { username: string; password: string }[]);
       register(
         email: string,
