@@ -87,6 +87,7 @@ dotfiles
 dropdown
 entrypoint
 env
+ETag
 executables
 extraEnv
 extraEnvFrom
@@ -98,6 +99,7 @@ findable
 Fortran
 Frontend
 gapped
+gevent
 git-lfs
 githooks
 github
@@ -152,6 +154,8 @@ kwargs
 ld
 lefthand
 lfs
+lifecycle
+liveness
 LocalClient
 localhost
 Lucene
@@ -194,6 +198,7 @@ pipenv
 pipx
 PNG
 png
+Polybox
 Postgresql
 powerline
 pre
@@ -308,9 +313,11 @@ unmapped
 unmerged
 Unmount
 unmount
+unmounting
 unpause
 unpushed
 unschedulable
+unsetting
 untracked
 untracked
 updatable
@@ -326,6 +333,7 @@ vertices
 viewmodel
 vis
 vm
+WebDAV
 webhook
 webhooks
 wildcard

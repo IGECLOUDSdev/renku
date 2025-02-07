@@ -166,9 +166,11 @@ describe("Basic public project functionality", () => {
   });
 
   it("Start a new session as anonymous user.", () => {
+    // Do not re-use the logged-in session
+    cy.session(["anonymous", getRandomString()], () => {});
+
     // Log out and go to the project again
     cy.visit("/");
-    cy.logout();
     cy.visitAndLoadProject(projectIdentifier);
 
     // Check we show the appropriate message
@@ -187,6 +189,8 @@ describe("Basic public project functionality", () => {
 
     // Stop the session -- mind that anonymous users cannot pause sessions
     cy.deleteSession({ fromSessionPage: true });
+
+    cy.robustLogin();
   });
 
   it("Start a new session on a project without permissions.", () => {
@@ -265,7 +269,8 @@ describe("Basic public project functionality", () => {
         cy.get("#endpoint")
           .should("have.value", "")
           .type("http://s3.amazonaws.com");
-        cy.getDataCy("cloud-storage-edit-next-button")
+        cy.getDataCy("test-cloud-storage-button").should("be.visible").click();
+        cy.getDataCy("add-cloud-storage-continue-button")
           .should("be.visible")
           .click();
 
@@ -274,7 +279,7 @@ describe("Basic public project functionality", () => {
         cy.get("#mountPoint")
           .should("have.value", "external_storage/data_s3")
           .type("{selectAll}data_s3");
-        cy.get("#readOnly").should("not.be.checked").check();
+        cy.get("#readOnly").should("be.checked").check();
 
         cy.getDataCy("cloud-storage-edit-update-button")
           .should("be.visible")
@@ -282,7 +287,7 @@ describe("Basic public project functionality", () => {
           .click();
 
         cy.getDataCy("cloud-storage-edit-body").contains(
-          "storage data_s3 has been succesfully added"
+          "storage data_s3 has been successfully added"
         );
         cy.getDataCy("cloud-storage-edit-close-button")
           .should("be.visible")
